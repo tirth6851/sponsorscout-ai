@@ -1,0 +1,1 @@
+# sponsorscout-ai
