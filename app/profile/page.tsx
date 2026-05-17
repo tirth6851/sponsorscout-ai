@@ -347,15 +347,37 @@ function Step4({ data, onChange }: { data: Record<string, string>; onChange: (k:
 export default function ProfilePage() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const router = useRouter();
 
   const handleChange = (key: string, value: string) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleNext = () => {
-    if (step < 4) setStep(s => s + 1);
-    else router.push('/dashboard');
+  const handleNext = async () => {
+    if (step < 4) {
+      setStep(s => s + 1);
+      return;
+    }
+    // Step 4 — save profile then navigate to dashboard
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const json = await res.json();
+      if (!res.ok && !json.demo) {
+        throw new Error(json.error ?? 'Failed to save profile');
+      }
+      router.push('/dashboard');
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setSaving(false);
+    }
   };
 
   const handleBack = () => {
@@ -399,12 +421,20 @@ export default function ProfilePage() {
               {stepComponents[step as keyof typeof stepComponents]}
             </div>
 
+            {/* Save error */}
+            {saveError && (
+              <div className="mt-4 flex items-start gap-2 p-3 rounded-xl bg-red-500/[0.08] border border-red-500/[0.15]">
+                <span className="text-xs text-red-400">{saveError}</span>
+              </div>
+            )}
+
             {/* Navigation */}
             <div className="flex items-center gap-3 mt-8 pt-6 border-t border-white/[0.06]">
               {step > 1 && (
                 <button
                   onClick={handleBack}
-                  className="btn-ghost flex items-center gap-2 px-5 py-2.5"
+                  disabled={saving}
+                  className="btn-ghost flex items-center gap-2 px-5 py-2.5 disabled:opacity-50"
                 >
                   <ArrowLeft size={15} />
                   Back
@@ -412,10 +442,11 @@ export default function ProfilePage() {
               )}
               <button
                 onClick={handleNext}
-                className="btn-primary flex-1 justify-center py-3 text-sm"
+                disabled={saving}
+                className="btn-primary flex-1 justify-center py-3 text-sm disabled:opacity-50"
               >
-                {step === 4 ? 'Get My Matches' : 'Continue'}
-                <ArrowRight size={15} />
+                {saving ? 'Saving…' : step === 4 ? 'Get My Matches' : 'Continue'}
+                {!saving && <ArrowRight size={15} />}
               </button>
             </div>
           </div>
