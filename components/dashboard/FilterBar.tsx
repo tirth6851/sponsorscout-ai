@@ -11,13 +11,17 @@ const TIERS: { value: FitTier | 'All'; label: string; dot?: string }[] = [
   { value: 'Low-Fit', label: 'Low-Fit', dot: 'bg-red-400' },
 ];
 
+export type SortKey = 'match' | 'date' | 'salary' | 'company';
+
 interface FilterBarProps {
   active: FitTier | 'All';
   onChange: (tier: FitTier | 'All') => void;
   counts: Record<string, number>;
+  sort: SortKey;
+  onSort: (key: SortKey) => void;
 }
 
-export default function FilterBar({ active, onChange, counts }: FilterBarProps) {
+export default function FilterBar({ active, onChange, counts, sort, onSort }: FilterBarProps) {
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       {/* Tier filters */}
@@ -49,21 +53,24 @@ export default function FilterBar({ active, onChange, counts }: FilterBarProps) 
         ))}
       </div>
 
-      {/* Sort + filters */}
+      {/* Sort */}
       <div className="flex items-center gap-2">
         <select
           className="select-field text-xs py-1.5 pr-8 pl-3 w-auto cursor-pointer"
-          defaultValue="match"
+          value={sort}
+          onChange={(e) => onSort(e.target.value as SortKey)}
         >
           <option value="match">Sort: Match Score</option>
           <option value="date">Sort: Date Posted</option>
-          <option value="salary">Sort: Salary</option>
-          <option value="company">Sort: Company</option>
+          <option value="salary">Sort: Salary (High → Low)</option>
+          <option value="company">Sort: Company A–Z</option>
         </select>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 glass-card rounded-lg text-xs text-slate-400 hover:text-white transition-colors duration-200">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 glass-card rounded-lg text-xs text-slate-500 cursor-default">
           <SlidersHorizontal size={12} />
-          Filters
-        </button>
+          <span>
+            {active === 'All' ? 'All tiers' : active}
+          </span>
+        </div>
       </div>
     </div>
   );

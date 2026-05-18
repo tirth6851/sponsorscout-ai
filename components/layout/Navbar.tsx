@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Menu, X, Compass } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Menu, X, Compass, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client';
 
 const navLinks = [
   { href: '/#features', label: 'Features' },
@@ -16,7 +17,9 @@ const navLinks = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 24);
@@ -27,6 +30,28 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [pathname]);
+
+  // Fetch current user if Supabase is configured
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    const supabase = createClient();
+    if (!supabase) return;
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUserEmail(user?.email ?? null);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUserEmail(session?.user?.email ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    const supabase = createClient();
+    if (!supabase) return;
+    await supabase.auth.signOut();
+    router.push('/');
+    router.refresh();
+  };
 
   return (
     <nav
@@ -70,12 +95,26 @@ export default function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/strategy" className="text-sm text-slate-400 hover:text-white transition-colors duration-200">
-              My Strategy
-            </Link>
-            <Link href="/profile" className="btn-primary text-xs px-4 py-2">
-              Build Profile
-            </Link>
+            {userEmail ? (
+              <>
+                <span className="text-xs text-slate-500 max-w-[140px] truncate">{userEmail}</span>
+                <button
+                  onClick={handleSignOut}
+                  className="btn-ghost text-xs px-3 py-2 flex items-center gap-1.5"
+                >
+                  <LogOut size={12} /> Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-sm text-slate-400 hover:text-white transition-colors duration-200">
+                  Sign In
+                </Link>
+                <Link href="/signup" className="btn-primary text-xs px-4 py-2">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile toggle */}

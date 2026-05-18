@@ -142,12 +142,22 @@ export default function OpportunityCard({ opportunity: opp }: OpportunityCardPro
 
         {/* Footer actions */}
         <div className="flex items-center gap-2 mt-auto pt-3 border-t border-white/[0.05]">
-          <button className="flex-1 py-2 rounded-lg text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-200 shadow-glow-sm">
+          <a
+            href={(opp as Opportunity & { application_url?: string }).application_url ?? `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(opp.title + ' ' + opp.company)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 py-2 rounded-lg text-xs font-semibold text-white text-center bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 transition-all duration-200 shadow-glow-sm"
+          >
             Apply Now
-          </button>
-          <button className="p-2 rounded-lg glass border border-white/[0.08] text-slate-400 hover:text-white transition-colors duration-200">
+          </a>
+          <a
+            href={(opp as Opportunity & { application_url?: string }).application_url ?? `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(opp.title + ' ' + opp.company)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-2 rounded-lg glass border border-white/[0.08] text-slate-400 hover:text-white transition-colors duration-200"
+          >
             <ExternalLink size={13} />
-          </button>
+          </a>
         </div>
       </div>
     </div>
