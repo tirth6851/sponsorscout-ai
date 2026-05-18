@@ -15,7 +15,9 @@ export function requireEnv(key: string): string {
 
 export const SUPABASE_CONFIGURED = !!(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 );
 
-export const ANTHROPIC_CONFIGURED = !!process.env.ANTHROPIC_API_KEY;
+export const GROQ_CONFIGURED = !!(
+  process.env.GROQ_API_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL
+);
