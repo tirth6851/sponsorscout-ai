@@ -1,23 +1,21 @@
 import { createServerClient } from '@supabase/ssr';
 import { type NextRequest, NextResponse } from 'next/server';
+import { isSupabaseConfigured, getSupabaseUrl, getSupabasePublishableKey } from '@/lib/env';
 
 const PROTECTED_ROUTES = ['/dashboard', '/strategy', '/profile'];
 const AUTH_ROUTES = ['/login', '/signup'];
 
 export async function middleware(request: NextRequest) {
-  // Skip if Supabase is not configured — app runs in demo mode
-  if (
-    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  ) {
+  // Skip entirely in demo mode — no Supabase configured
+  if (!isSupabaseConfigured()) {
     return NextResponse.next();
   }
 
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    getSupabaseUrl()!,
+    getSupabasePublishableKey()!,
     {
       cookies: {
         getAll() {
@@ -36,14 +34,12 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  // Refresh session if expired — required for App Router
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
 
-  // Redirect unauthenticated users away from protected routes
   const isProtected = PROTECTED_ROUTES.some((p) => pathname.startsWith(p));
   if (isProtected && !user) {
     const loginUrl = new URL('/login', request.url);
@@ -51,7 +47,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect authenticated users away from auth pages
   const isAuthRoute = AUTH_ROUTES.includes(pathname);
   if (isAuthRoute && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -62,7 +57,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and static assets
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

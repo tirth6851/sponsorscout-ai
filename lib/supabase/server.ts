@@ -1,20 +1,16 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { isSupabaseConfigured, getSupabaseUrl, getSupabasePublishableKey } from '@/lib/env';
 
-export function isSupabaseConfigured(): boolean {
-  return !!(
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  );
-}
+export { isSupabaseConfigured };
 
 export function createClient() {
   if (!isSupabaseConfigured()) return null;
 
   const cookieStore = cookies();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+    getSupabaseUrl()!,
+    getSupabasePublishableKey()!,
     {
       cookies: {
         get(name: string) {
