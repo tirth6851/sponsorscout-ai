@@ -99,7 +99,7 @@ export default function Hero() {
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass border border-blue-500/20 text-xs text-blue-400 font-medium mb-6 animate-fade-in">
               <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse-slow" />
-              Built for International Engineering Students · Powered by Groq AI
+              Visa-aware · Engineering-specific · Powered by Groq AI
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-[1.07] tracking-tight text-white mb-6">
