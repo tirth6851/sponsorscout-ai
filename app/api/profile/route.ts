@@ -33,7 +33,6 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const supabase = createClient();
   if (!supabase) {
-    // Demo mode — acknowledge but don't persist
     return NextResponse.json({ profile: null, demo: true }, { status: 200 });
   }
 
@@ -61,6 +60,17 @@ export async function POST(request: NextRequest) {
     graduation_date: body.graduation ? `${body.graduation}-01` : null,
     gpa: body.gpa ? parseFloat(body.gpa) : null,
     stem_eligible: body.stem === 'Yes — STEM eligible',
+    // Engineering-specific
+    engineering_discipline: body.engineeringDiscipline ?? null,
+    role_family_preferences: body.roleFamilyPreferences
+      ? body.roleFamilyPreferences.split(',').map((s: string) => s.trim()).filter(Boolean)
+      : [],
+    tools: body.tools
+      ? body.tools.split(',').map((s: string) => s.trim()).filter(Boolean)
+      : [],
+    project_experience: body.projectExperience ?? null,
+    lab_research_experience: body.labResearchExperience ?? null,
+    // Career goals
     target_roles: body.roles
       ? body.roles.split(',').map((s: string) => s.trim()).filter(Boolean)
       : [],
@@ -72,6 +82,7 @@ export async function POST(request: NextRequest) {
     skills: body.skills
       ? body.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
       : [],
+    // Visa
     current_visa: body.visa ?? null,
     auth_start_date: body.authStart ?? null,
     auth_end_date: body.authEnd ?? null,
