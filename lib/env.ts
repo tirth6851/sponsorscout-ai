@@ -1,7 +1,3 @@
-/**
- * Validates that a required environment variable is set.
- * Throws at runtime with a clear message if missing.
- */
 export function requireEnv(key: string): string {
   const value = process.env[key];
   if (!value || value.trim() === '') {
@@ -10,14 +6,43 @@ export function requireEnv(key: string): string {
         `Add it to .env.local — see .env.example for reference.`
     );
   }
-  return value;
+  return value.trim();
 }
 
-export const SUPABASE_CONFIGURED = !!(
-  process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-);
+// ── Supabase helpers ──────────────────────────────────────────────────────────
 
-export const GROQ_CONFIGURED = !!(
-  process.env.GROQ_API_KEY && process.env.NEXT_PUBLIC_SUPABASE_URL
-);
+export function getSupabaseUrl(): string | undefined {
+  return process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
+}
+
+export function getSupabasePublishableKey(): string | undefined {
+  // Accept either the new publishable key name or the legacy anon key name
+  return (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
+    undefined
+  );
+}
+
+export function isValidSupabaseUrl(url: string | undefined): url is string {
+  return typeof url === 'string' && url.startsWith('https://') && url.length > 10;
+}
+
+export function isSupabaseConfigured(): boolean {
+  return isValidSupabaseUrl(getSupabaseUrl()) && !!getSupabasePublishableKey();
+}
+
+// ── Groq helpers ──────────────────────────────────────────────────────────────
+
+export function getGroqApiKey(): string | undefined {
+  return process.env.GROQ_API_KEY?.trim() || undefined;
+}
+
+export function isGroqConfigured(): boolean {
+  return !!getGroqApiKey();
+}
+
+// ── Module-level flags (evaluated once at startup) ────────────────────────────
+
+export const SUPABASE_CONFIGURED = isSupabaseConfigured();
+export const GROQ_CONFIGURED = isGroqConfigured();

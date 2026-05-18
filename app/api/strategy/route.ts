@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+
+export const dynamic = 'force-dynamic';
 import { scoreOpportunity, DbProfile, DbOpportunity } from '@/lib/matching';
 import { generateDeterministicStrategy } from '@/lib/strategy';
 import { mockOpportunities, mockProfile } from '@/lib/mock-data';
