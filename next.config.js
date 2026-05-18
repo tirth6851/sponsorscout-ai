@@ -1,15 +1,17 @@
 /** @type {import('next').NextConfig} */
-const isGitHubPages = process.env.GITHUB_ACTIONS === 'true';
+const isStaticExport = process.env.STATIC_EXPORT === 'true';
 const repoName = 'sponsorscout-ai';
 
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  images: {
-    unoptimized: true,
-  },
-  basePath: isGitHubPages ? `/${repoName}` : '',
-  assetPrefix: isGitHubPages ? `/${repoName}/` : '',
+  ...(isStaticExport
+    ? {
+        output: 'export',
+        images: { unoptimized: true },
+        basePath: `/${repoName}`,
+        assetPrefix: `/${repoName}/`,
+      }
+    : {}),
 };
 
 module.exports = nextConfig;
