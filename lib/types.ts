@@ -1,9 +1,44 @@
-export type VisaType = 'F-1 (CPT)' | 'F-1 (OPT)' | 'F-1 (STEM OPT)' | 'J-1' | 'H-1B' | 'Green Card' | 'US Citizen';
-export type ExperienceLevel = 'Internship' | 'Entry Level' | 'Mid Level' | 'Senior';
+export type VisaType =
+  | 'F-1 (CPT)'
+  | 'F-1 (OPT)'
+  | 'F-1 (STEM OPT)'
+  | 'J-1'
+  | 'H-1B'
+  | 'Green Card'
+  | 'US Citizen';
+
+export type ExperienceLevel =
+  | 'Internship'
+  | 'Entry Level'
+  | 'Mid Level'
+  | 'Senior';
+
 export type DegreeLevel = 'Bachelor' | 'Master' | 'PhD';
 export type FitTier = 'Realistic' | 'Stretch' | 'Low-Fit';
-export type SponsorshipStatus = 'Strong History' | 'Occasional' | 'Rare' | 'Unknown';
+export type SponsorshipStatus =
+  | 'Strong History'
+  | 'Occasional'
+  | 'Rare'
+  | 'Unknown';
 export type RemotePreference = 'Remote' | 'Hybrid' | 'On-site' | 'Any';
+
+export type EngineeringDiscipline =
+  | 'Software/CS'
+  | 'Data/AI/ML'
+  | 'Electrical/Hardware'
+  | 'Mechanical/Manufacturing'
+  | 'Civil/Environmental'
+  | 'Industrial/Systems'
+  | 'Research/Lab'
+  | 'Other';
+
+export type RoleFamilyPreference =
+  | 'internship'
+  | 'co-op'
+  | 'research'
+  | 'campus job'
+  | 'entry-level'
+  | 'full-time';
 
 export interface StudentProfile {
   id: string;
@@ -18,6 +53,11 @@ export interface StudentProfile {
   optStartDate?: string;
   stemEligible: boolean;
   sponsorshipNeeded: boolean;
+  // Engineering-specific
+  engineeringDiscipline?: EngineeringDiscipline;
+  roleFamilyPreferences?: RoleFamilyPreference[];
+  tools?: string[];
+  // Career
   targetRoles: string[];
   targetIndustries: string[];
   skills: string[];
@@ -52,6 +92,10 @@ export interface Opportunity {
   skills: string[];
   description: string;
   applicants?: number;
+  // Engineering enrichment (from normalized_jobs)
+  engineeringDiscipline?: string;
+  roleFamily?: string;
+  sponsorshipSignal?: 'Better' | 'Unclear' | 'Risky';
 }
 
 export interface StrategyInsight {

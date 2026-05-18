@@ -42,6 +42,40 @@ export function isGroqConfigured(): boolean {
   return !!getGroqApiKey();
 }
 
+// ── Job API helpers ───────────────────────────────────────────────────────────
+
+export function getAdzunaAppId(): string | undefined {
+  return process.env.ADZUNA_APP_ID?.trim() || undefined;
+}
+
+export function getAdzunaAppKey(): string | undefined {
+  return process.env.ADZUNA_APP_KEY?.trim() || undefined;
+}
+
+export function getSerpApiKey(): string | undefined {
+  return process.env.SERPAPI_API_KEY?.trim() || undefined;
+}
+
+export function getUSAJobsApiKey(): string | undefined {
+  return process.env.USAJOBS_API_KEY?.trim() || undefined;
+}
+
+export function getUSAJobsUserAgent(): string | undefined {
+  return process.env.USAJOBS_USER_AGENT?.trim() || undefined;
+}
+
+export function isAdzunaConfigured(): boolean {
+  return !!getAdzunaAppId() && !!getAdzunaAppKey();
+}
+
+export function isSerpApiConfigured(): boolean {
+  return !!getSerpApiKey();
+}
+
+export function isUSAJobsConfigured(): boolean {
+  return !!getUSAJobsApiKey() && !!getUSAJobsUserAgent();
+}
+
 // ── Module-level flags (evaluated once at startup) ────────────────────────────
 
 export const SUPABASE_CONFIGURED = isSupabaseConfigured();

@@ -22,10 +22,10 @@ export default function Footer() {
             </p>
             <div className="mt-4 flex items-center gap-2">
               <span className="px-2 py-1 text-xs rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/20 font-medium">
-                Built with Opus 4.7
+                Powered by Groq AI
               </span>
-              <span className="px-2 py-1 text-xs rounded-md bg-purple-500/10 text-purple-400 border border-purple-500/20 font-medium">
-                Hackathon 2025
+              <span className="px-2 py-1 text-xs rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-medium">
+                Engineering-focused
               </span>
             </div>
           </div>
@@ -70,8 +70,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-6 border-t border-white/[0.05] flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-slate-600">© 2025 SponsorScout AI. Built for the Built with Opus 4.7 Hackathon.</p>
-          <p className="text-xs text-slate-600">Visa data is approximate and for strategic planning only. Always consult a licensed immigration attorney.</p>
+          <p className="text-xs text-slate-600">© 2025 SponsorScout AI.</p>
+          <p className="text-xs text-slate-600">Visa data is for strategic planning only. Always consult a licensed immigration attorney.</p>
         </div>
       </div>
     </footer>
